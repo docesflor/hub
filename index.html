@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doces Flor - Hub</title>
+  <meta name="description" content="Doces Flor: pedidos, cardápio e administração." />
+  <meta name="theme-color" content="#d4a5a5" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <style>
+    /* =====================================
+       ESTE É O HUB UNIFICADO DA DOCES FLOR.
+       Salve este arquivo como index.html na raiz do repositório
+       que será publicado no GitHub Pages (ex: docesflor.github.io/hub/).
+       Se o domínio principal for https://docesflor.github.io/,
+       salve este arquivo na raiz do repositório principal.
+    ===================================== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #fff0f5 0%, #f8e1e7 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #5a3a3a;
+    }
+    .container {
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 40px 28px;
+      box-shadow: 0 12px 30px rgba(90, 58, 58, 0.12);
+    }
+    .logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 18px rgba(90, 58, 58, 0.15);
+    }
+    h1 {
+      font-size: 1.9rem;
+      margin-bottom: 6px;
+      color: #8b4a5a;
+    }
+    p.tagline {
+      font-size: 1rem;
+      margin-bottom: 28px;
+      color: #7a5a5a;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+    .btn-pedidos { background: #d4a5a5; color: #fff; }
+    .btn-cardapio { background: #b58b7a; color: #fff; }
+    .btn-admin { background: #5a3a3a; color: #fff; }
+    footer {
+      margin-top: 22px;
+      font-size: 0.85rem;
+      color: #9a7a7a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Logo: substitua por uma imagem real do projeto, se desejar -->
+    <img src="./icon-192.png" alt="Doces Flor" class="logo" />
+    <h1>Doces Flor</h1>
+    <p class="tagline">Sabor e carinho em cada detalhe</p>
+
+    <!-- Botões que apontam para os três sub-sites usando caminhos relativos.
+         Se o hub estiver em /hub/ e os sites em subpastas irmãs, estes caminhos funcionam no GitHub Pages. -->
+    <a href="../pedidos/" class="btn btn-pedidos">🧁 Fazer Pedido</a>
+    <a href="../cardapio/" class="btn btn-cardapio">📖 Ver Cardápio</a>
+    <a href="../admin/" class="btn btn-admin">⚙️ Administração</a>
+  </div>
+
+  <footer>
+    © Doces Flor. Todos os direitos reservados.
+  </footer>
+
+  <script>
+    /* Registra o Service Worker do hub usando caminho relativo.
+       Use './sw.js' para garantir que o GitHub Pages encontre o arquivo no mesmo diretório. */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('Service Worker do Hub registrado.'))
+        .catch(err => console.error('Erro ao registrar SW do Hub:', err));
+    }
+  </script>
+</body>
+</html>
