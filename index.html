@@ -8,6 +8,11 @@
 <link rel="icon" type="image/png" href="./icon-512.png">
 <link rel="apple-touch-icon" href="./icon-512.png">
 <link rel="manifest" href="./manifest.json">
+
+<!-- Firebase (igual ao do Sistema de Pedidos) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -17,7 +22,9 @@
     });
   }
 </script>
+
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
   :root {
     --brown-dark:  #2B1206;
@@ -44,7 +51,81 @@
     min-height: 100vh;
   }
 
-  /* ── HEADER ── */
+  /* ==================== TELA DE LOGIN ==================== */
+  #tela-login {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    background: var(--brown-dark);
+    padding: 20px;
+  }
+  #tela-login::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(232,148,58,0.18) 0%, transparent 70%),
+                repeating-linear-gradient(-45deg, transparent 0px, transparent 18px, rgba(255,255,255,0.02) 18px, rgba(255,255,255,0.02) 19px);
+  }
+  .login-box {
+    background: var(--cream);
+    border-radius: 24px;
+    padding: 44px 36px 36px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .login-logo-ring {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    border: 3px solid var(--amber);
+    padding: 4px;
+    background: var(--brown-dark);
+    margin: 0 auto 18px;
+    animation: floatLogo 4s ease-in-out infinite;
+  }
+  .login-logo-ring img {
+    width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+  }
+  .login-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--brown-dark);
+  }
+  .login-title span { color: var(--amber); }
+  .login-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--brown-warm);
+    margin-bottom: 28px;
+  }
+  .login-box input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--cream-dark);
+    border-radius: 50px;
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  .btn-login {
+    width: 100%;
+    padding: 13px;
+    background: var(--brown-dark);
+    color: var(--amber-light);
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  #loginErro { color: var(--red); margin: 8px 0 12px; min-height: 20px; font-weight: 600; }
+
+  /* ==================== ESTILO ORIGINAL DO HUB ==================== */
   header {
     position: relative;
     background: var(--brown-dark);
@@ -58,16 +139,6 @@
     background:
       radial-gradient(ellipse 60% 50% at 50% 0%, rgba(232,148,58,0.18) 0%, transparent 70%),
       repeating-linear-gradient(-45deg, transparent 0px, transparent 18px, rgba(255,255,255,0.02) 18px, rgba(255,255,255,0.02) 19px);
-    pointer-events: none;
-  }
-  header::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0; right: 0;
-    height: 60px;
-    background: var(--cream);
-    clip-path: ellipse(55% 100% at 50% 100%);
   }
   .header-inner {
     position: relative;
@@ -118,49 +189,6 @@
     margin-top: 0.3rem;
   }
 
-  /* ── STATUS BADGE ── */
-  .status-bar {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 0.5rem;
-  }
-  .status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.9rem;
-    border-radius: 50px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: rgba(253,248,240,0.85);
-    text-decoration: none;
-    transition: background 0.2s, border-color 0.2s, transform 0.2s;
-  }
-  .status-pill:hover {
-    background: rgba(232,148,58,0.2);
-    border-color: var(--amber);
-    transform: translateY(-2px);
-  }
-  .status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #4ade80;
-    box-shadow: 0 0 0 2px rgba(74,222,128,0.25);
-    animation: pulse-dot 2s ease-in-out infinite;
-    flex-shrink: 0;
-  }
-  @keyframes pulse-dot {
-    0%, 100% { box-shadow: 0 0 0 2px rgba(74,222,128,0.25); }
-    50%       { box-shadow: 0 0 0 5px rgba(74,222,128,0.12); }
-  }
-
-  /* ── TABS ── */
   .nav-tabs {
     display: flex;
     justify-content: center;
@@ -195,7 +223,6 @@
     font-weight: 600;
   }
 
-  /* ── MAIN ── */
   main {
     max-width: 860px;
     margin: 0 auto;
@@ -235,7 +262,6 @@
     font-style: italic;
   }
 
-  /* ── SYSTEM CARDS GRID ── */
   .systems-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -289,27 +315,6 @@
     line-height: 1.4;
   }
 
-  .sys-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    margin: 0 1.5rem 1rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 50px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    width: fit-content;
-  }
-  .sys-badge-online  { background: rgba(74,222,128,0.12); color: #16a34a; border: 1px solid rgba(74,222,128,0.3); }
-  .sys-badge-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #4ade80;
-    animation: pulse-dot 2s ease-in-out infinite;
-  }
-
   .sys-card-links {
     padding: 0 1.5rem 1.5rem;
     display: flex;
@@ -338,20 +343,11 @@
     color: var(--amber-light);
   }
   .btn-sys-primary:hover { background: var(--brown-mid); transform: scale(1.02); box-shadow: 0 4px 14px var(--shadow); }
-  .btn-sys-secondary {
-    background: var(--cream);
-    color: var(--brown-warm);
-    border: 1px solid var(--cream-dark);
-  }
-  .btn-sys-secondary:hover { background: var(--cream-dark); border-color: var(--amber); color: var(--brown-dark); }
-
   .btn-sys-green { background: var(--green); color: white; }
   .btn-sys-green:hover { background: #3a6347; transform: scale(1.02); box-shadow: 0 4px 14px rgba(74,124,89,0.3); }
-
   .btn-sys-amber { background: var(--amber); color: white; }
   .btn-sys-amber:hover { background: #d4792a; transform: scale(1.02); box-shadow: 0 4px 14px rgba(232,148,58,0.3); }
 
-  /* ── ADMIN SECTION ── */
   .admin-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -427,10 +423,7 @@
   }
   .btn-admin-dark   { background: var(--brown-dark); color: var(--amber-light); }
   .btn-admin-dark:hover { background: var(--brown-mid); }
-  .btn-admin-ghost  { background: var(--cream); color: var(--brown-warm); border: 1px solid var(--cream-dark); }
-  .btn-admin-ghost:hover { border-color: var(--amber); color: var(--brown-dark); background: var(--cream-dark); }
 
-  /* ── DIVIDER ── */
   .section-divider {
     display: flex;
     align-items: center;
@@ -452,7 +445,6 @@
     white-space: nowrap;
   }
 
-  /* ── INFO BOX ── */
   .info-box {
     background: linear-gradient(135deg, var(--brown-dark), var(--brown-mid));
     border-radius: 16px;
@@ -497,7 +489,6 @@
     line-height: 1.5;
   }
 
-  /* ── FOOTER ── */
   footer {
     background: var(--brown-dark);
     color: var(--cream);
@@ -534,7 +525,6 @@
     font-size: 0.72rem;
   }
 
-  /* ── RESPONSIVE ── */
   @media (max-width: 500px) {
     .systems-grid { grid-template-columns: 1fr; }
     .admin-grid   { grid-template-columns: 1fr; }
@@ -543,6 +533,27 @@
 </style>
 </head>
 <body>
+
+<!-- TELA DE LOGIN -->
+<div id="tela-login">
+  <div class="login-box">
+    <div class="login-logo-ring">
+      <img src="https://raw.githubusercontent.com/docesflor/cardapio/main/icon-512.png" alt="Doces Flor">
+    </div>
+    <div class="login-title">Doces <span>Flor</span></div>
+    <div class="login-sub">Hub Central</div>
+
+    <input type="email" id="loginEmail" placeholder="E-mail">
+    <input type="password" id="loginSenha" placeholder="Senha">
+
+    <p id="loginErro"></p>
+
+    <button id="btnLogin" class="btn-login" onclick="fazerLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- CONTEÚDO PRINCIPAL (escondido até login) -->
+<div id="hubContent" style="display: none;">
 
 <!-- HEADER -->
 <header>
@@ -558,254 +569,292 @@
       <h1>Doces <span>Flor</span></h1>
       <p>Hub Central</p>
     </div>
-
-    <!-- STATUS DOS 3 SISTEMAS -->
-    <div class="status-bar">
-      <a href="https://docesflor.github.io/cardapio/" target="_blank" class="status-pill">
-        <span class="status-dot"></span>
-        Cardápio online
-      </a>
-      <a href="https://docesflor.github.io/pedidos/" target="_blank" class="status-pill">
-        <span class="status-dot"></span>
-        Pedidos online
-      </a>
-      <a href="https://docesflor.github.io/admin/" target="_blank" class="status-pill">
-        <span class="status-dot"></span>
-        Admin online
-      </a>
-    </div>
   </div>
 
-  <div class="nav-tabs">
-    <button class="nav-tab active" data-section="sistemas">Sistemas</button>
-    <button class="nav-tab" data-section="administracao">Administração</button>
+  <div class="nav-tabs" style="position: relative; z-index: 2;">
+    <button class="nav-tab active" data-section="sistemas" onclick="handleTabClick.call(this)">Sistemas</button>
+    <button class="nav-tab" data-section="administracao" onclick="handleTabClick.call(this)">Administração</button>
+  </div>
+
+  <div style="display: flex; justify-content: center; padding: 1rem 1rem 2.5rem; position: relative; z-index: 2;">
+    <button id="btnLogout" onclick="sairConta()" style="padding: 0.65rem 1.8rem; background: var(--red); color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+      Sair da Conta
+    </button>
   </div>
 </header>
 
-<!-- MAIN -->
-<main>
+  <!-- MAIN -->
+  <main>
 
-  <!-- ══════════════ SISTEMAS ══════════════ -->
-  <section id="sistemas" class="section visible">
-    <div class="section-header">
-      <h2>Sistemas</h2>
-      <div class="ornament"><span class="ornament-icon">&#10022;</span></div>
-      <p>Acesse os tres ambientes do ecossistema Doces Flor</p>
-    </div>
+    <!-- SISTEMAS -->
+    <section id="sistemas" class="section visible">
+      <div class="section-header">
+        <h2>Sistemas</h2>
+        <div class="ornament"><span class="ornament-icon">&#10022;</span></div>
+        <p>Acesse os três ambientes do ecossistema Doces Flor</p>
+      </div>
 
-    <div class="systems-grid">
+      <div class="systems-grid">
 
-      <!-- CARDAPIO -->
-      <div class="sys-card">
-        <div class="sys-card-header">
-          <div class="sys-icon sys-icon-cardapio">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--amber-light)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 6h16M4 10h16M4 14h10M4 18h6"/>
-              <rect x="14" y="13" width="7" height="7" rx="1.5"/>
+        <!-- CARDAPIO -->
+        <div class="sys-card">
+          <div class="sys-card-header">
+            <div class="sys-icon sys-icon-cardapio">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--amber-light)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 6h16M4 10h16M4 14h10M4 18h6"/>
+                <rect x="14" y="13" width="7" height="7" rx="1.5"/>
+              </svg>
+            </div>
+            <div class="sys-card-info">
+              <h3>Cardápio</h3>
+              <p>Vitrine pública de produtos, preços e pedidos pelo WhatsApp</p>
+            </div>
+          </div>
+          <div class="sys-card-links">
+            <a href="https://docesflor.github.io/cardapio/" target="_blank" class="btn-sys btn-sys-primary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Abrir Cardápio
+            </a>
+          </div>
+        </div>
+
+        <!-- PEDIDOS -->
+        <div class="sys-card">
+          <div class="sys-card-header">
+            <div class="sys-icon sys-icon-pedidos">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 01-8 0"/>
+              </svg>
+            </div>
+            <div class="sys-card-info">
+              <h3>Pedidos</h3>
+              <p>Interface dedicada para clientes realizarem pedidos online</p>
+            </div>
+          </div>
+          <div class="sys-card-links">
+            <a href="https://docesflor.github.io/pedidos/" target="_blank" class="btn-sys btn-sys-green">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Abrir Pedidos
+            </a>
+          </div>
+        </div>
+
+        <!-- ADMIN -->
+        <div class="sys-card">
+          <div class="sys-card-header">
+            <div class="sys-icon sys-icon-admin">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M20 21a8 8 0 00-16 0"/>
+                <path d="M18 16l2 2 4-4" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="sys-card-info">
+              <h3>Admin</h3>
+              <p>Gestão de produtos, preços, estoque e configurações gerais</p>
+            </div>
+          </div>
+          <div class="sys-card-links">
+            <a href="https://docesflor.github.io/admin/" target="_blank" class="btn-sys btn-sys-amber">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+              Abrir Admin
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ADMINISTRAÇÃO -->
+    <section id="administracao" class="section">
+      <div class="section-header">
+        <h2>Administração</h2>
+        <div class="ornament"><span class="ornament-icon">&#10022;</span></div>
+        <p>Repositórios, ferramentas e acesso rápido aos ambientes</p>
+      </div>
+
+      <div class="info-box">
+        <div class="info-box-inner">
+          <div class="info-box-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
           </div>
-          <div class="sys-card-info">
-            <h3>Cardápio Digital</h3>
-            <p>Vitrine pública de produtos, preços e pedidos pelo WhatsApp</p>
+          <div class="info-box-text">
+            <h4>Acesso restrito</h4>
+            <p>Esta aba é de uso interno. Os repositórios abaixo contêm o código-fonte e dados dos sistemas Doces Flor.</p>
           </div>
         </div>
-        <span class="sys-badge sys-badge-online">
-          <span class="sys-badge-dot"></span>
-          Online
-        </span>
-        <div class="sys-card-links">
-          <a href="https://docesflor.github.io/cardapio/" target="_blank" class="btn-sys btn-sys-primary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Abrir Cardápio
-          </a>
-          <a href="https://github.com/docesflor/cardapio" target="_blank" class="btn-sys btn-sys-secondary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-            Repositório
-          </a>
-        </div>
       </div>
 
-      <!-- PEDIDOS -->
-      <div class="sys-card">
-        <div class="sys-card-header">
-          <div class="sys-icon sys-icon-pedidos">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 01-8 0"/>
-            </svg>
+      <div class="section-divider"><span>Repositórios GitHub</span></div>
+
+      <div class="admin-grid">
+
+        <!-- CARDAPIO -->
+        <div class="admin-card border-brown">
+          <div class="admin-card-label">Repositório</div>
+          <div class="admin-card-title">Cardápio</div>
+          <div class="admin-card-desc">Código-fonte do cardápio público. HTML, CSS, JS e assets de imagem dos produtos.</div>
+          <div class="admin-card-url">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+            github.com/docesflor/cardapio
           </div>
-          <div class="sys-card-info">
-            <h3>Site de Pedidos</h3>
-            <p>Interface dedicada para criação dos pedidos</p>
+          <div class="admin-card-actions">
+            <a href="https://github.com/docesflor/cardapio" target="_blank" class="btn-admin btn-admin-dark">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+              Repositório
+            </a>
           </div>
         </div>
-        <span class="sys-badge sys-badge-online">
-          <span class="sys-badge-dot"></span>
-          Online
-        </span>
-        <div class="sys-card-links">
-          <a href="https://docesflor.github.io/pedidos/" target="_blank" class="btn-sys btn-sys-green">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Abrir Pedidos
-          </a>
-          <a href="https://github.com/docesflor/pedidos" target="_blank" class="btn-sys btn-sys-secondary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-            Repositório
-          </a>
-        </div>
-      </div>
 
-      <!-- ADMIN -->
-      <div class="sys-card">
-        <div class="sys-card-header">
-          <div class="sys-icon sys-icon-admin">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="8" r="4"/>
-              <path d="M20 21a8 8 0 00-16 0"/>
-              <path d="M18 16l2 2 4-4" stroke-width="2"/>
-            </svg>
+        <!-- PEDIDOS -->
+        <div class="admin-card border-green">
+          <div class="admin-card-label">Repositório</div>
+          <div class="admin-card-title">Pedidos</div>
+          <div class="admin-card-desc">Código-fonte do sistema de pedidos. Interface de cliente para seleção e envio de encomendas.</div>
+          <div class="admin-card-url">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+            github.com/docesflor/pedidos
           </div>
-          <div class="sys-card-info">
-            <h3>Painel Admin</h3>
-            <p>Gestão de produtos, preços, estoque e configurações gerais</p>
+          <div class="admin-card-actions">
+            <a href="https://github.com/docesflor/pedidos" target="_blank" class="btn-admin btn-admin-dark">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+              Repositório
+            </a>
           </div>
         </div>
-        <span class="sys-badge sys-badge-online">
-          <span class="sys-badge-dot"></span>
-          Online
-        </span>
-        <div class="sys-card-links">
-          <a href="https://docesflor.github.io/admin/" target="_blank" class="btn-sys btn-sys-amber">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Abrir Admin
-          </a>
-          <a href="https://github.com/docesflor/admin" target="_blank" class="btn-sys btn-sys-secondary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-            Repositório
-          </a>
+
+        <!-- ADMIN -->
+        <div class="admin-card border-amber">
+          <div class="admin-card-label">Repositório</div>
+          <div class="admin-card-title">Admin</div>
+          <div class="admin-card-desc">Código-fonte do painel administrativo. Gestão de produtos, preços e dados do cardápio.</div>
+          <div class="admin-card-url">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+            github.com/docesflor/admin
+          </div>
+          <div class="admin-card-actions">
+            <a href="https://github.com/docesflor/admin" target="_blank" class="btn-admin btn-admin-dark">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+              Repositório
+            </a>
+          </div>
         </div>
+
       </div>
+    </section>
 
-    </div><!-- /systems-grid -->
-
-  </section>
-
-  <!-- ══════════════ ADMINISTRACAO ══════════════ -->
-  <section id="administracao" class="section">
-    <div class="section-header">
-      <h2>Administração</h2>
-      <div class="ornament"><span class="ornament-icon">&#10022;</span></div>
-      <p>Repositórios, ferramentas e acesso rápido aos ambientes</p>
-    </div>
-
-    <div class="info-box">
-      <div class="info-box-inner">
-        <div class="info-box-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-        </div>
-        <div class="info-box-text">
-          <h4>Acesso restrito</h4>
-          <p>Esta aba e de uso interno. Os Repositórios abaixo contem o Código-fonte e dados dos sistemas Doces Flor.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-divider"><span>Repositórios GitHub</span></div>
-
-    <div class="admin-grid">
-
-      <!-- REPO CARDAPIO -->
-      <div class="admin-card border-brown">
-        <div class="admin-card-label">Repositório</div>
-        <div class="admin-card-title">Cardápio Digital</div>
-        <div class="admin-card-desc">Código-fonte do Cardápio publico. HTML, CSS, JS e assets de imagem dos produtos.</div>
-        <div class="admin-card-url">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-          github.com/docesflor/cardapio
-        </div>
-        <div class="admin-card-actions">
-          <a href="https://github.com/docesflor/cardapio" target="_blank" class="btn-admin btn-admin-dark">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Abrir
-          </a>
-          <a href="https://docesflor.github.io/cardapio/" target="_blank" class="btn-admin btn-admin-ghost">
-            Ver site
-          </a>
-        </div>
-      </div>
-
-      <!-- REPO PEDIDOS -->
-      <div class="admin-card border-green">
-        <div class="admin-card-label">Repositório</div>
-        <div class="admin-card-title">Site de Pedidos</div>
-        <div class="admin-card-desc">Código-fonte do sistema de pedidos. Interface de cliente para seleção e envio de encomendas.</div>
-        <div class="admin-card-url">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-          github.com/docesflor/pedidos
-        </div>
-        <div class="admin-card-actions">
-          <a href="https://github.com/docesflor/pedidos" target="_blank" class="btn-admin btn-admin-dark">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Abrir
-          </a>
-          <a href="https://docesflor.github.io/pedidos/" target="_blank" class="btn-admin btn-admin-ghost">
-            Ver site
-          </a>
-        </div>
-      </div>
-
-      <!-- REPO ADMIN -->
-      <div class="admin-card border-amber">
-        <div class="admin-card-label">Repositório</div>
-        <div class="admin-card-title">Painel Admin</div>
-        <div class="admin-card-desc">Código-fonte do painel administrativo. Gestão de produtos, precos e dados do Cardápio.</div>
-        <div class="admin-card-url">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-          github.com/docesflor/admin
-        </div>
-        <div class="admin-card-actions">
-          <a href="https://github.com/docesflor/admin" target="_blank" class="btn-admin btn-admin-dark">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Abrir
-          </a>
-          <a href="https://docesflor.github.io/admin/" target="_blank" class="btn-admin btn-admin-ghost">
-            Ver site
-          </a>
-        </div>
-      </div>
-
-    </div><!-- /admin-grid -->
-
-  </section>
-
-</main>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <h3>Doces Flor</h3>
-    <p>Brigadeiros artesanais em Jaraguá do Sul &amp; região</p>
-    <small>Hub interno &middot; Uso exclusivo da equipe &middot; 2025</small>
-  </div>
-</footer>
+  </main>
 
 <script>
-  /* ── TABS ── */
-  document.querySelectorAll('.nav-tab').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = btn.dataset.section;
-      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.section').forEach(s => {
-        s.classList.toggle('visible', s.id === target);
-      });
+// ==================== FIREBASE CONFIG ====================
+const firebaseConfig = {
+  apiKey: "AIzaSyCYqic9IlxUXlS_yEuMLZvmg16wGh5_Ing",
+  authDomain: "doces-flor.firebaseapp.com",
+  databaseURL: "https://doces-flor-default-rtdb.firebaseio.com",
+  projectId: "doces-flor",
+  storageBucket: "doces-flor.firebasestorage.app",
+  messagingSenderId: "430929421910",
+  appId: "1:430929421910:web:2f1bea78c78602c3387df7"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// ==================== LOGIN ====================
+function fazerLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const senha = document.getElementById('loginSenha').value;
+  const erro  = document.getElementById('loginErro');
+  const btn   = document.getElementById('btnLogin');
+
+  if (!email || !senha) {
+    erro.textContent = 'Preencha e-mail e senha.';
+    return;
+  }
+
+  btn.textContent = 'Entrando...';
+  btn.disabled = true;
+  erro.textContent = '';
+
+  auth.signInWithEmailAndPassword(email, senha)
+    .catch(e => {
+      btn.textContent = 'Entrar';
+      btn.disabled = false;
+      const msgs = {
+        'auth/user-not-found': 'E-mail não cadastrado.',
+        'auth/wrong-password': 'Senha incorreta.',
+        'auth/invalid-email': 'E-mail inválido.'
+      };
+      erro.textContent = msgs[e.code] || 'Erro ao entrar. Tente novamente.';
     });
+  // A troca de tela (login -> hub) é feita pelo listener onAuthStateChanged
+  // abaixo, que é a ÚNICA fonte de verdade sobre o estado de login.
+  // Isso evita chamar a mesma lógica duas vezes (uma aqui, outra no listener).
+}
+
+// ==================== TABS ====================
+// Os botões de aba já têm onclick="handleTabClick.call(this)" direto no HTML,
+// então essa função não precisa (e não deve) ser registrada de novo via
+// addEventListener -- isso só duplicava a execução a cada clique.
+function handleTabClick() {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  this.classList.add('active');
+
+  const target = this.dataset.section;
+  document.querySelectorAll('.section').forEach(section => {
+    section.classList.toggle('visible', section.id === target);
   });
+}
+
+// ==================== LOGOUT ====================
+// O botão já tem onclick="sairConta()" no HTML. Não há mais nenhum
+// addEventListener duplicado sendo adicionado em cima dele.
+function sairConta() {
+  if (confirm('Deseja realmente sair da conta?')) {
+    auth.signOut().catch(err => {
+      console.error('Logout erro:', err);
+      alert('Erro no logout: ' + err.message);
+    });
+    // A troca de tela (hub -> login) também é feita pelo onAuthStateChanged.
+  }
+}
+
+// ==================== AUTH STATE (fonte única de verdade) ====================
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById('tela-login').style.display = 'none';
+    document.getElementById('hubContent').style.display = 'block';
+  } else {
+    document.getElementById('tela-login').style.display = 'flex';
+    document.getElementById('hubContent').style.display = 'none';
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginSenha').value = '';
+    document.getElementById('loginErro').textContent = '';
+    const btn = document.getElementById('btnLogin');
+    btn.textContent = 'Entrar';
+    btn.disabled = false;
+  }
+});
+
+// Enter na senha
+document.addEventListener('DOMContentLoaded', () => {
+  const senhaInput = document.getElementById('loginSenha');
+  if (senhaInput) {
+    senhaInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') fazerLogin();
+    });
+  }
+});
 </script>
 </body>
 </html>
